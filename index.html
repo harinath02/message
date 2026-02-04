@@ -9,6 +9,7 @@
             --pink: #ffb7c5;
             --glow: #ff85a2;
             --deep: #ff2d75;
+            --gold: #ffd700;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; touch-action: none; }
@@ -33,48 +34,51 @@
             inset: 0;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
             z-index: 10;
-            padding: 40px 20px;
+            padding: 20px;
             pointer-events: none;
+            overflow-y: auto; /* Allows scrolling if content grows */
         }
 
         h1 {
-            font-size: clamp(2.2rem, 10vw, 3.5rem);
+            font-size: clamp(2rem, 10vw, 3rem);
             color: var(--pink);
             text-shadow: 0 0 20px var(--glow);
+            margin-top: 20px;
+            margin-bottom: 15px;
             font-weight: 300;
-            text-align: center;
         }
 
         .message-box {
             text-align: center;
-            max-width: 90%;
-            font-size: clamp(0.9rem, 3.8vw, 1.1rem);
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.9);
+            width: 90%;
+            font-size: clamp(0.85rem, 3.5vw, 1rem);
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.85);
             font-style: italic;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            margin-bottom: 20px;
         }
 
-        /* Interaction Section */
         .interaction-zone {
-            width: 90%;
+            width: 95%;
             max-width: 400px;
             pointer-events: auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
             align-items: center;
+            gap: 15px;
         }
 
-        .input-wrap {
+        /* Fixed Input Box & Send Button */
+        .input-container {
             width: 100%;
             display: flex;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
             padding: 5px 15px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -84,120 +88,132 @@
             border: none;
             color: white;
             flex: 1;
-            padding: 10px;
+            padding: 12px 5px;
             outline: none;
             font-size: 1rem;
+            min-width: 0; /* Prevents push-out */
         }
 
-        /* Player Zone */
+        .send-btn {
+            background: transparent;
+            border: none;
+            color: var(--glow);
+            font-weight: bold;
+            padding: 0 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* Response Area Below Box */
+        #responseArea {
+            min-height: 60px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pop-text {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 15px;
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Player Section */
         .player-zone {
+            margin-top: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
 
         .vinyl-container {
-            width: clamp(100px, 20vh, 140px);
-            height: clamp(100px, 20vh, 140px);
+            width: 100px; height: 100px;
             position: relative;
         }
 
         .vinyl {
             width: 100%; height: 100%;
-            background: radial-gradient(circle, #333 0%, #000 70%);
+            background: radial-gradient(circle, #444 0%, #000 75%);
             border-radius: 50%;
-            border: 3px solid #222;
-            box-shadow: 0 0 20px var(--deep);
-            animation: rotate 8s linear infinite;
+            border: 2px solid #222;
+            box-shadow: 0 0 15px var(--deep);
+            animation: rotate 10s linear infinite;
             animation-play-state: paused;
         }
 
         .vinyl.playing { animation-play-state: running; }
 
-        .btn {
-            background: transparent;
+        .vinyl::after {
+            content: '';
+            position: absolute;
+            top: 35%; left: 35%; width: 30%; height: 30%;
+            background: var(--glow);
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        .music-btn {
+            background: rgba(0,0,0,0.5);
             border: 1px solid var(--pink);
             color: var(--pink);
-            padding: 10px 30px;
-            border-radius: 30px;
+            padding: 8px 25px;
+            border-radius: 20px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
             cursor: pointer;
-            transition: 0.3s;
         }
 
-        .btn:active { background: var(--pink); color: #000; }
-
-        /* Magic Response Text Animation */
-        #responseOverlay {
-            position: fixed;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 100;
-            pointer-events: none;
-            text-align: center;
-            width: 100%;
-        }
-
-        .pop-text {
-            font-size: 1.5rem;
-            color: white;
-            text-shadow: 0 0 20px var(--deep);
-            animation: popOut 3s forwards ease-out;
-            padding: 20px;
-        }
-
-        @keyframes popOut {
-            0% { transform: scale(0.5); opacity: 0; }
-            20% { transform: scale(1.1); opacity: 1; }
-            80% { transform: scale(1); opacity: 1; }
-            100% { transform: translateY(-50px); opacity: 0; }
-        }
+        #yt-player { position: absolute; visibility: hidden; pointer-events: none; }
 
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        #yt-audio { position: absolute; visibility: hidden; }
     </style>
 </head>
 <body>
 
 <canvas id="magicCanvas"></canvas>
-<div id="responseOverlay"></div>
 
 <div class="scene">
     <h1>Kaisi ho?</h1>
     
     <div class="message-box">
-        I always miss you a lot.
-        Each and every breath thinks about you.
-        My mind and my heart feel you.
-        Your voice echoes in my mind.
-        I really do care about you.
-        I’m not lying — you can trust me.
+        I always miss you a lot. Each and every breath thinks about you. My mind and my heart feel you. Your voice echoes in my mind. I really do care about you. I’m not lying — you can trust me.
     </div>
 
     <div class="interaction-zone">
-        <div class="input-wrap">
+        <div class="input-container">
             <input type="text" id="userIn" placeholder="Type anything...">
-            <button class="btn" style="border:none; padding: 0 10px;" onclick="showMagicText()">Send</button>
+            <button class="send-btn" onclick="handleSend()">Send</button>
         </div>
+
+        <div id="responseArea"></div>
 
         <div class="player-zone">
             <div class="vinyl-container">
                 <div class="vinyl" id="record"></div>
             </div>
-            <button class="btn" onclick="toggleMusic()" id="btnText">Start</button>
+            <button class="music-btn" onclick="toggleMusic()" id="btnText">Start</button>
         </div>
     </div>
 </div>
 
-<div id="yt-audio"></div>
+<div id="yt-player"></div>
 
 <script>
-    // 1. YouTube Control
+    // 1. YouTube Fixed Logic
     let player;
     let isPlaying = false;
     const tag = document.createElement('script');
@@ -205,10 +221,16 @@
     document.head.appendChild(tag);
 
     function onYouTubeIframeAPIReady() {
-        player = new YT.Player('yt-audio', {
-            height: '1', width: '1',
+        player = new YT.Player('yt-player', {
+            height: '0', width: '0',
             videoId: 'P4ofSL-n3s0',
-            playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'P4ofSL-n3s0' }
+            playerVars: { 
+                'autoplay': 0, 
+                'controls': 0, 
+                'loop': 1, 
+                'playlist': 'P4ofSL-n3s0',
+                'origin': window.location.origin 
+            }
         });
     }
 
@@ -227,43 +249,45 @@
         isPlaying = !isPlaying;
     }
 
-    // 2. Magic Text Feature
-    const yourMessages = [
-        "soyi thi?",
-        "khana khati ho shi se?",
-        "khush ho?",
-        "tabiyat kaisi hai?",
-        "cold se bachati ho khud ko?",
-        "sab thik hai na?",
-        "gandi ladki ho na!",
-        "bht jyada miss krta hu tmhe hmesha",
-        "mjhe pta hai mai tmhe preshan kr rha, extremely sorry",
-        "gadhi ho na!"
+    // 2. Interactive Logic & Care Messages
+    const careMsgs = [
+        { t: "soyi thi?", c: "#ff85a2" },
+        { t: "khana khati ho shi se?", c: "#7efbff" },
+        { t: "khush ho?", c: "#b9ff7e" },
+        { t: "tabiyat kaisi hai?", c: "#ffde7e" },
+        { t: "cold se bachati ho khud ko?", c: "#7e96ff" },
+        { t: "sab thik hai na?", c: "#ffffff" },
+        { t: "gandi ladki ho na!", c: "#ff7ef6" },
+        { t: "bht jyada miss krta hu tmhe hmesha", c: "#ff5e5e" },
+        { t: "mjhe pta hai mai tmhe preshan kr rha, extremely sorry", c: "#c27eff" },
+        { t: "gadhi ho na!", c: "#ffbc7e" }
     ];
 
-    function showMagicText() {
+    const treats = ["🥙", "🍡", "🌸", "🍃"]; // Gol Gappe, Gulab Jamun, Gajra, Paan symbols
+
+    function handleSend() {
         const input = document.getElementById('userIn');
         if (!input.value.trim()) return;
         
-        input.value = ""; // Clear input
-        const overlay = document.getElementById('responseOverlay');
-        const randomMsg = yourMessages[Math.floor(Math.random() * yourMessages.length)];
+        input.value = "";
+        const area = document.getElementById('responseArea');
+        const msg = careMsgs[Math.floor(Math.random() * careMsgs.length)];
         
-        const el = document.createElement('div');
-        el.className = 'pop-text';
-        el.innerText = randomMsg;
+        area.innerHTML = `<div class="pop-text" style="color: ${msg.c}; text-shadow: 0 0 15px ${msg.c}">${msg.t}</div>`;
         
-        overlay.innerHTML = ''; // Clear previous
-        overlay.appendChild(el);
-        
-        setTimeout(() => el.remove(), 3000);
+        // Bonus: Make treats fall
+        for(let i=0; i<8; i++) {
+            setTimeout(() => {
+                const treat = treats[Math.floor(Math.random() * treats.length)];
+                particles.push(new TreatParticle(treat));
+            }, i * 100);
+        }
     }
 
-    // 3. Background Interaction Engine
+    // 3. Canvas Engine
     const canvas = document.getElementById('magicCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
-    let sparkles = [];
 
     function resize() {
         canvas.width = window.innerWidth;
@@ -273,20 +297,14 @@
     resize();
 
     class Element {
-        constructor(type) {
-            this.type = type;
-            this.reset();
-        }
-        reset() {
+        constructor() {
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
-            this.size = this.type === 'star' ? Math.random() * 2 : Math.random() * 5 + 2;
-            this.speedY = Math.random() * 0.4 + 0.1;
-            this.opacity = Math.random();
+            this.size = Math.random() * 2;
+            this.speedY = Math.random() * 0.5 + 0.2;
         }
         draw() {
-            ctx.globalAlpha = this.opacity;
-            ctx.fillStyle = this.type === 'star' ? '#fff' : '#ffb7c5';
+            ctx.fillStyle = "white";
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
             ctx.fill();
@@ -295,41 +313,51 @@
         }
     }
 
-    class Spark {
-        constructor(x, y) {
-            this.x = x; this.y = y;
-            this.size = Math.random() * 8 + 2;
-            this.life = 1;
+    class TreatParticle {
+        constructor(symbol) {
+            this.symbol = symbol;
+            this.x = Math.random() * canvas.width;
+            this.y = -50;
+            this.size = Math.random() * 20 + 20;
+            this.speedY = Math.random() * 3 + 2;
+            this.rotation = Math.random() * 360;
+            this.spin = Math.random() * 5 - 2.5;
+            this.dead = false;
         }
         draw() {
-            ctx.globalAlpha = this.life;
-            ctx.fillStyle = '#ff85a2';
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
-            ctx.fill();
-            this.life -= 0.03;
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation * Math.PI / 180);
+            ctx.font = `${this.size}px Arial`;
+            ctx.fillText(this.symbol, 0, 0);
+            ctx.restore();
+            
+            this.y += this.speedY;
+            this.rotation += this.spin;
+            if(this.y > canvas.height + 50) this.dead = true;
         }
     }
 
-    for(let i=0; i<70; i++) particles.push(new Element('star'));
-    for(let i=0; i<20; i++) particles.push(new Element('petal'));
+    for(let i=0; i<100; i++) particles.push(new Element());
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = particles.filter(p => !p.dead);
         particles.forEach(p => p.draw());
-        sparkles = sparkles.filter(s => s.life > 0);
-        sparkles.forEach(s => s.draw());
         requestAnimationFrame(animate);
     }
     animate();
 
-    function handleMagic(e) {
-        let x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-        let y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
-        sparkles.push(new Spark(x, y));
-    }
-    window.addEventListener('mousemove', handleMagic);
-    window.addEventListener('touchmove', handleMagic);
+    // Touch feedback
+    window.addEventListener('touchmove', (e) => {
+        const x = e.touches[0].clientX;
+        const y = e.touches[0].clientY;
+        ctx.fillStyle = "rgba(255, 133, 162, 0.3)";
+        ctx.beginPath();
+        ctx.arc(x, y, 15, 0, Math.PI*2);
+        ctx.fill();
+    });
 </script>
+
 </body>
 </html>
