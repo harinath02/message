@@ -3,90 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Thinking of You</title>
+    <title>Magic For You</title>
     <style>
         :root {
-            --primary: #ffb7c5;
-            --accent: #ff85a2;
-            --text-glow: rgba(255, 183, 197, 0.4);
+            --pink: #ffb7c5;
+            --glow: #ff85a2;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; touch-action: none; }
 
         body, html {
             height: 100%;
             width: 100%;
             overflow: hidden;
-            font-family: 'Georgia', serif;
-            background: radial-gradient(circle at center, #2d1b4e 0%, #1a1a2e 100%);
+            font-family: 'serif';
+            background: #0b0b18;
             color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
-        /* Full Screen Canvas for Stars and Falling Flowers */
-        #bgCanvas {
+        /* The Interactive Background Layer */
+        #magicCanvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 1;
-            pointer-events: none;
         }
 
-        /* Main Content Container (No Card) */
-        .content {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            text-align: center;
+        /* Content layer - Floating over the magic */
+        .scene {
+            position: absolute;
+            inset: 0;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            max-height: 100vh;
-            overflow-y: auto; /* Allow scrolling on small phones if needed */
+            z-index: 10;
+            padding: 20px;
+            pointer-events: none; /* Allows touch to pass through to canvas */
         }
 
         h1 {
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            margin-bottom: 20px;
-            color: var(--primary);
+            font-size: clamp(2rem, 10vw, 3.5rem);
+            color: var(--pink);
+            text-shadow: 0 0 20px var(--glow);
+            margin-bottom: 5vh;
             font-weight: 300;
-            text-shadow: 0 0 15px var(--text-glow);
-            letter-spacing: 2px;
         }
 
-        .message {
-            font-size: clamp(1rem, 4vw, 1.25rem);
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 30px;
-            white-space: pre-line;
+        .message-box {
+            text-align: center;
+            max-width: 90%;
+            font-size: clamp(0.9rem, 3.8vw, 1.1rem);
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
             font-style: italic;
-            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+            margin-bottom: 5vh;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
         }
 
-        /* Vinyl Player Area */
-        .player-wrapper {
+        /* Bottom Player Section */
+        .player-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            pointer-events: auto; /* Re-enable touch for buttons */
+        }
+
+        .vinyl-container {
+            width: clamp(100px, 25vh, 160px);
+            height: clamp(100px, 25vh, 160px);
             position: relative;
-            width: clamp(140px, 40vw, 200px);
-            height: clamp(140px, 40vw, 200px);
-            margin-bottom: 30px;
         }
 
         .vinyl {
-            width: 100%;
-            height: 100%;
-            background: #111;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, #333 0%, #000 70%);
             border-radius: 50%;
-            border: 4px solid #222;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8), 0 0 15px var(--text-glow);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: spin 8s linear infinite;
+            border: 3px solid #222;
+            box-shadow: 0 0 30px rgba(0,0,0,1), 0 0 10px var(--glow);
+            animation: rotate 10s linear infinite;
             animation-play-state: paused;
         }
 
@@ -95,207 +91,174 @@
         .vinyl::after {
             content: '';
             position: absolute;
-            width: 30%; height: 30%;
-            background: var(--accent);
+            top: 35%; left: 35%; width: 30%; height: 30%;
+            background: var(--glow);
             border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.2);
         }
 
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        #youtube-player {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .play-btn {
-            background: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 12px 35px;
-            border-radius: 50px;
-            font-size: 1rem;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.4s ease;
+        .magic-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--pink);
+            color: var(--pink);
+            padding: 10px 30px;
+            border-radius: 30px;
             text-transform: uppercase;
-            backdrop-filter: blur(5px);
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
         }
 
-        .play-btn:hover {
-            background: var(--primary);
-            color: #1a1a2e;
-            box-shadow: 0 0 20px var(--primary);
-        }
-
-        /* Tap/Touch Sparkle Effect */
-        .sparkle {
-            position: fixed;
-            pointer-events: none;
-            z-index: 100;
-            animation: burst 1s ease-out forwards;
-        }
-
-        @keyframes burst {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
-        }
+        #yt-audio { position: absolute; visibility: hidden; }
     </style>
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
+<canvas id="magicCanvas"></canvas>
 
-<div class="content">
+<div class="scene">
     <h1>Kaisi ho?</h1>
     
-    <div class="message">
+    <div class="message-box">
         I always miss you a lot.
         Each and every breath thinks about you.
-        My mind and my heart feel you —
-        sometimes I feel you right here in my chest too.
-
-        Your voice echoes in my ears and in my mind.
+        My mind and my heart feel you.
+        
+        Your voice echoes in my mind.
         You come into my dreams — day and night.
-
-        I miss each and every moment of you.
-        I really feel you.
+        
         I really do care about you.
         I’m not lying — you can trust me.
     </div>
 
-    <div class="player-wrapper">
-        <div class="vinyl" id="vinyl"></div>
-        <div id="youtube-player"></div>
+    <div class="player-zone">
+        <div class="vinyl-container">
+            <div class="vinyl" id="record"></div>
+        </div>
+        <button class="magic-btn" onclick="toggleMusic()" id="btnText">Start Magic</button>
     </div>
-
-    <button class="play-btn" onclick="togglePlayback()" id="playBtn">Play Magic</button>
 </div>
 
+<div id="yt-audio"></div>
+
 <script>
-    // 1. YouTube Logic
+    // 1. YouTube Audio Control
     let player;
     let isPlaying = false;
-
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    document.head.appendChild(tag);
 
     function onYouTubeIframeAPIReady() {
-        player = new YT.Player('youtube-player', {
+        player = new YT.Player('yt-audio', {
             height: '1', width: '1',
             videoId: 'MYWWYJtMsEY',
-            playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'MYWWYJtMsEY' },
-            events: { 'onReady': () => console.log("Ready") }
+            playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'MYWWYJtMsEY' }
         });
     }
 
-    function togglePlayback() {
-        const vinyl = document.getElementById('vinyl');
-        const btn = document.getElementById('playBtn');
+    function toggleMusic() {
+        const record = document.getElementById('record');
+        const btn = document.getElementById('btnText');
         if (!isPlaying) {
             player.playVideo();
-            vinyl.classList.add('playing');
+            record.classList.add('playing');
             btn.innerText = "Pause Magic";
-            isPlaying = true;
         } else {
             player.pauseVideo();
-            vinyl.classList.remove('playing');
-            btn.innerText = "Play Magic";
-            isPlaying = false;
+            record.classList.remove('playing');
+            btn.innerText = "Start Magic";
         }
+        isPlaying = !isPlaying;
     }
 
-    // 2. Stars & Falling Flowers Canvas
-    const canvas = document.getElementById('bgCanvas');
+    // 2. High-End Magic Interaction Engine
+    const canvas = document.getElementById('magicCanvas');
     const ctx = canvas.getContext('2d');
-    let width, height;
-    let elements = [];
+    let particles = [];
+    let sparkles = [];
 
-    function init() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        elements = [];
-        
-        // Create Stars
-        for(let i=0; i<150; i++) {
-            elements.push({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                size: Math.random() * 1.5,
-                type: 'star',
-                blink: Math.random() * 0.05
-            });
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Elements: Stars and Drifting Petals
+    class Element {
+        constructor(type) {
+            this.type = type;
+            this.reset();
         }
-        
-        // Create Flowers
-        for(let i=0; i<30; i++) {
-            elements.push(new Flower());
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = this.type === 'star' ? Math.random() * 2 : Math.random() * 5 + 3;
+            this.speedX = (Math.random() - 0.5) * 1;
+            this.speedY = Math.random() * 0.5 + 0.2;
+            this.opacity = Math.random();
+        }
+        draw() {
+            ctx.globalAlpha = this.opacity;
+            ctx.fillStyle = this.type === 'star' ? '#fff' : '#ffb7c5';
+            ctx.beginPath();
+            if(this.type === 'star') ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+            else ctx.ellipse(this.x, this.y, this.size, this.size*1.5, this.opacity, 0, Math.PI*2);
+            ctx.fill();
+            
+            this.y += this.speedY;
+            this.x += this.speedX;
+            if(this.y > canvas.height) this.y = -10;
         }
     }
 
-    function Flower() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.r = Math.random() * 4 + 2;
-        this.dx = (Math.random() - 0.5) * 1;
-        this.dy = Math.random() * 1 + 0.5;
-        this.angle = Math.random() * 360;
-        this.type = 'flower';
+    // Interactive Magic Sparks
+    class Spark {
+        constructor(x, y) {
+            this.x = x; this.y = y;
+            this.size = Math.random() * 10 + 5;
+            this.life = 1;
+            this.color = `hsl(${Math.random() * 50 + 330}, 100%, 80%)`;
+        }
+        draw() {
+            ctx.globalAlpha = this.life;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = this.color;
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            this.life -= 0.02;
+            this.size *= 0.96;
+        }
     }
 
-    function draw() {
-        ctx.clearRect(0, 0, width, height);
-        
-        elements.forEach(el => {
-            if(el.type === 'star') {
-                ctx.fillStyle = `rgba(255, 255, 255, ${0.5 + Math.sin(Date.now() * 0.002 + el.x) * 0.4})`;
-                ctx.beginPath();
-                ctx.arc(el.x, el.y, el.size, 0, Math.PI * 2);
-                ctx.fill();
-            } else {
-                // Draw Petal
-                ctx.save();
-                ctx.translate(el.x, el.y);
-                ctx.rotate(el.angle * Math.PI / 180);
-                ctx.fillStyle = '#ffb7c5';
-                ctx.beginPath();
-                ctx.ellipse(0, 0, el.r, el.r*1.5, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-                
-                el.x += el.dx;
-                el.y += el.dy;
-                el.angle += 1;
-                
-                if(el.y > height) el.y = -20;
-                if(el.x > width) el.x = 0;
-            }
-        });
-        requestAnimationFrame(draw);
+    // Initialize background
+    for(let i=0; i<80; i++) particles.push(new Element('star'));
+    for(let i=0; i<30; i++) particles.push(new Element('petal'));
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => p.draw());
+        sparkles = sparkles.filter(s => s.life > 0);
+        sparkles.forEach(s => s.draw());
+        requestAnimationFrame(animate);
     }
+    animate();
 
-    window.addEventListener('resize', init);
-    init();
-    draw();
-
-    // 3. Creative Touch Interaction
-    function createSparkle(x, y) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        sparkle.innerHTML = Math.random() > 0.5 ? '💗' : '✨';
-        sparkle.style.left = x + 'px';
-        sparkle.style.top = y + 'px';
-        sparkle.style.fontSize = Math.random() * 20 + 20 + 'px';
-        document.body.appendChild(sparkle);
-        setTimeout(() => sparkle.remove(), 1000);
+    // Touch Interaction
+    function handleMagic(e) {
+        let x = e.clientX || e.touches[0].clientX;
+        let y = e.clientY || e.touches[0].clientY;
+        for(let i=0; i<3; i++) sparkles.push(new Spark(x, y));
     }
-
-    document.addEventListener('mousedown', (e) => createSparkle(e.clientX, e.clientY));
-    document.addEventListener('touchstart', (e) => createSparkle(e.touches[0].clientX, e.touches[0].clientY));
-
+    canvas.addEventListener('mousemove', handleMagic);
+    canvas.addEventListener('touchmove', handleMagic);
 </script>
+
 </body>
 </html>
