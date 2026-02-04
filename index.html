@@ -1,65 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>For You 💙</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: linear-gradient(135deg, #1d2671, #c33764);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-      text-align: center;
-      overflow: hidden;
-    }
+<meta charset="UTF-8">
+<title>Gajra Wali</title>
 
-    .card {
-      background: rgba(255,255,255,0.1);
-      padding: 30px 25px;
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.3);
-      animation: fadeIn 2s ease;
-      max-width: 320px;
-    }
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fdeff9, #ecb3ff);
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
 
-    img {
-      width: 220px;
-      border-radius: 15px;
-      margin-bottom: 20px;
-    }
+.card {
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(12px);
+  max-width: 420px;
+  width: 100%;
+  border-radius: 28px;
+  padding: 26px;
+  color: #4a2440;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  animation: rise 1.5s ease;
+}
 
-    h1 {
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-    p {
-      font-size: 16px;
-      line-height: 1.5;
-      opacity: 0.9;
-    }
+h1 {
+  text-align: center;
+  margin-bottom: 14px;
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
-  </style>
+p {
+  line-height: 1.6;
+  font-size: 15.5px;
+}
+
+.effects {
+  display: flex;
+  justify-content: space-around;
+  font-size: 26px;
+  margin: 18px 0;
+}
+
+.effects span {
+  cursor: pointer;
+  transition: transform .2s;
+}
+.effects span:hover {
+  transform: scale(1.3);
+}
+
+.popup {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.85);
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  animation: fadeUp 2s ease forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.flower {
+  position: absolute;
+  bottom: -10px;
+  font-size: 18px;
+  animation: float 7s linear;
+}
+
+@keyframes float {
+  to { transform: translateY(-120vh); opacity: 0; }
+}
+
+.music {
+  margin-top: 16px;
+  text-align: center;
+}
+.music iframe {
+  border-radius: 14px;
+}
+</style>
 </head>
+
 <body>
 
-  <div class="card">
-    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExa2x5dGF3dTQxNnM3M2V0bGNqNWY2a2FvN3JrOWF1b2x4eDExZyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/3o6Zt6ML6BklcajjsA/giphy.gif" alt="Miss you">
-    <h1>I miss you so much 🥺</h1>
-    <p>
-      Every little thing reminds me of you.  
-      I just wanted you to know…  
-      you’re always on my mind 💫
-    </p>
+<div class="card">
+  <h1>Thinking of You</h1>
+
+  <p>
+    I always miss you a lot.<br>
+    Each and every breath thinks about you.<br>
+    My mind and my heart feel you —<br>
+    sometimes I feel you right here in my chest too.<br><br>
+
+    Your voice echoes in my ears and in my mind.<br>
+    You come into my dreams — day and night.<br><br>
+
+    I miss each and every moment of you.<br>
+    I really feel you.<br>
+    I really do care for you.<br>
+    I’m not lying — you can trust me.
+  </p>
+
+  <div class="effects">
+    <span onclick="playEffect('🌸','Tum khush ho na?')">🌸</span>
+    <span onclick="playEffect('😊','Hanso na yrr, please')">😊</span>
+    <span onclick="playEffect('🍽️','Khana khaya?')">🍽️</span>
+    <span onclick="playEffect('😴','Soyi thi? Aaram kro')">😴</span>
   </div>
+
+  <div class="music">
+    <!-- YouTube Shorts embed (tap to play sound) -->
+    <iframe width="100%" height="180"
+      src="https://www.youtube.com/embed/MYWWYJtMsEY"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+<script>
+function playEffect(icon, text) {
+  const f = document.createElement("div");
+  f.className = "flower";
+  f.innerHTML = icon;
+  f.style.left = Math.random() * 100 + "vw";
+  document.body.appendChild(f);
+  setTimeout(() => f.remove(), 7000);
+
+  const p = document.createElement("div");
+  p.className = "popup";
+  p.textContent = text;
+  document.body.appendChild(p);
+  setTimeout(() => p.remove(), 2000);
+}
+</script>
 
 </body>
 </html>
