@@ -57,6 +57,7 @@
             color: rgba(255, 255, 255, 0.85);
             font-style: italic;
             margin-bottom: 25px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .interaction-zone {
@@ -72,11 +73,11 @@
         .input-bar {
             width: 100%;
             display: flex;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.07);
             backdrop-filter: blur(15px);
             border-radius: 30px;
             padding: 5px 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         input {
@@ -87,6 +88,7 @@
             padding: 12px 5px;
             outline: none;
             font-size: 1rem;
+            min-width: 0;
         }
 
         .send-btn {
@@ -96,44 +98,77 @@
             font-weight: bold;
             padding: 0 10px;
             cursor: pointer;
+            font-size: 0.9rem;
+            flex-shrink: 0;
         }
 
         #responseArea {
             min-height: 50px;
+            width: 100%;
             text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
+        .care-msg {
+            font-size: 1.2rem;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .player-container {
             margin-top: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
 
         .vinyl {
-            width: 100px; height: 100px;
+            width: 110px; height: 110px;
             background: radial-gradient(circle, #333 0%, #000 75%);
             border-radius: 50%;
             border: 2px solid #222;
-            box-shadow: 0 0 20px var(--deep);
+            box-shadow: 0 0 25px rgba(255, 133, 162, 0.4);
+            position: relative;
             animation: spin 10s linear infinite;
             animation-play-state: paused;
         }
 
         .vinyl.playing { animation-play-state: running; }
 
-        .music-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--pink);
-            color: var(--pink);
-            padding: 10px 30px;
-            border-radius: 20px;
-            cursor: pointer;
-            text-transform: uppercase;
+        .vinyl::after {
+            content: '';
+            position: absolute;
+            top: 35%; left: 35%; width: 30%; height: 30%;
+            background: var(--glow);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--glow);
         }
 
-        #yt-player { position: absolute; top: -1000px; }
+        .music-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--pink);
+            color: var(--pink);
+            padding: 10px 35px;
+            border-radius: 25px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+        }
+
+        /* YouTube Container Fix - Visible but off-screen */
+        #yt-api-frame { 
+            position: fixed; 
+            bottom: -100px; 
+            right: -100px; 
+            width: 1px; 
+            height: 1px; 
+            opacity: 0.01; 
+        }
 
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
@@ -141,126 +176,201 @@
 <body>
 
 <canvas id="magicCanvas"></canvas>
-<div id="yt-player"></div>
+<div id="yt-api-frame"></div>
 
 <div class="scene">
     <h1>Kaisi ho?</h1>
     
     <div class="message-box">
-        I always miss you a lot. Each and every breath thinks about you. My mind and my heart feel you. Your voice echoes in my mind. I really do care about you. I’m not lying — you can trust me.
+        I always miss you a lot. Each and every breath thinks about you. 
+        Your voice echoes in my mind. I really do care about you. 
+        I’m not lying — you can trust me.
     </div>
 
     <div class="interaction-zone">
         <div class="input-bar">
             <input type="text" id="userInput" placeholder="Type anything...">
-            <button class="send-btn" onclick="handleSend()">SEND</button>
+            <button class="send-btn" onclick="handleMagic()">SEND</button>
         </div>
 
         <div id="responseArea"></div>
 
         <div class="player-container">
             <div class="vinyl" id="record"></div>
-            <button class="music-btn" onclick="togglePlay()" id="playBtn">Start Music</button>
+            <button class="music-btn" onclick="togglePlay()" id="playBtn">START</button>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. YouTube Audio Fix
+    // 1. YouTube Advanced Fix
     let player;
-    let isPlaying = false;
+    let musicStarted = false;
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
 
     function onYouTubeIframeAPIReady() {
-        player = new YT.Player('yt-player', {
-            height: '1', width: '1',
+        player = new YT.Player('yt-api-frame', {
             videoId: 'P4ofSL-n3s0',
-            playerVars: { 'autoplay': 0, 'controls': 0, 'playsinline': 1, 'playlist': 'P4ofSL-n3s0', 'loop': 1 },
-            events: { 'onStateChange': onPlayerStateChange }
+            playerVars: { 
+                'autoplay': 0, 
+                'controls': 0, 
+                'loop': 1, 
+                'playlist': 'P4ofSL-n3s0',
+                'playsinline': 1,
+                'enablejsapi': 1
+            }
         });
     }
 
-    function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.ENDED) { player.playVideo(); }
-    }
-
     function togglePlay() {
-        const record = document.getElementById('record');
         const btn = document.getElementById('playBtn');
-        if (!isPlaying) {
+        const record = document.getElementById('record');
+        
+        if (!musicStarted) {
+            // Handshake for Mobile Playback
             player.playVideo();
+            player.unMute();
             record.classList.add('playing');
-            btn.innerText = "Pause Music";
+            btn.innerText = "PAUSE";
+            musicStarted = true;
         } else {
             player.pauseVideo();
             record.classList.remove('playing');
-            btn.innerText = "Start Music";
+            btn.innerText = "START";
+            musicStarted = false;
         }
-        isPlaying = !isPlaying;
     }
 
-    // 2. Interaction & Treats
-    const careMsgs = ["soyi thi?", "khana khati ho shi se?", "khush ho?", "tabiyat kaisi hai?", "cold se bachati ho khud ko?", "sab thik hai na?", "gandi ladki ho na!", "bht jyada miss krta hu tmhe hmesha", "extremely sorry for disturbing you", "gadhi ho na!"];
-    const treats = ["🥘", "🍬", "🌸", "🍃"]; // Gol Gappe, Sweet, Gajra, Paan
+    // 2. Realistic Treats & Interaction
+    const careMsgs = [
+        "soyi thi?", "khana khati ho shi se?", "khush ho?", "tabiyat kaisi hai?",
+        "cold se bachati ho khud ko?", "sab thik hai na?", "gandi ladki ho na!",
+        "bht jyada miss krta hu tmhe hmesha", "extremely sorry for disturbing you", "gadhi ho na!"
+    ];
+    
+    const treatSymbols = ["🍫", "🎀", "🌸", "❤️", "🫂"]; 
 
-    function handleSend() {
+    function handleMagic() {
         const input = document.getElementById('userInput');
         if (!input.value.trim()) return;
         input.value = "";
+
         const area = document.getElementById('responseArea');
-        const msg = careMsgs[Math.floor(Math.random() * careMsgs.length)];
-        area.innerHTML = `<div style="color:var(--pink); font-weight:bold; font-size:1.2rem; animation:fadeIn 0.5s;">${msg}</div>`;
-        
+        const randomMsg = careMsgs[Math.floor(Math.random() * careMsgs.length)];
+        area.innerHTML = `<div class="care-msg" style="color:hsl(${Math.random()*360}, 80%, 80%); text-shadow: 0 0 10px currentColor">${randomMsg}</div>`;
+
         for(let i=0; i<6; i++) {
-            setTimeout(() => particles.push(new Treat(treats[Math.floor(Math.random()*treats.length)])), i * 100);
+            setTimeout(() => {
+                const sym = treatSymbols[Math.floor(Math.random() * treatSymbols.length)];
+                particles.push(new Treat(sym));
+            }, i * 150);
         }
     }
 
-    // 3. Canvas Engine: Stars + Magic Finger Trail
+    // 3. Canvas Background & Finger Sparkle Engine
     const canvas = document.getElementById('magicCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
-    let mouse = { x: -100, y: -100 };
 
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
     window.addEventListener('resize', resize);
     resize();
 
     class Star {
-        constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 1.5; this.speed = Math.random() * 0.2 + 0.1; }
-        draw() { ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); this.y += this.speed; if(this.y > canvas.height) this.y = 0; }
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 1.5;
+            this.speed = Math.random() * 0.3 + 0.1;
+        }
+        draw() {
+            ctx.fillStyle = "rgba(255,255,255,0.4)";
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+            ctx.fill();
+            this.y += this.speed;
+            if (this.y > canvas.height) this.y = 0;
+        }
     }
 
+    // Finger Sparkle Class
     class Sparkle {
-        constructor(x, y) { this.x = x; this.y = y; this.size = Math.random() * 4 + 2; this.life = 1; this.vx = (Math.random()-0.5)*2; this.vy = (Math.random()-0.5)*2; }
-        draw() { ctx.globalAlpha = this.life; ctx.fillStyle = var(--glow); ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); this.life -= 0.02; this.x += this.vx; this.y += this.vy; }
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = Math.random() * 4 + 1;
+            this.speedX = Math.random() * 2 - 1;
+            this.speedY = Math.random() * 2 - 1;
+            this.color = `hsl(${Math.random() * 50 + 330}, 100%, 80%)`;
+            this.life = 1;
+        }
+        draw() {
+            ctx.globalAlpha = this.life;
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.life -= 0.02;
+            if (this.life <= 0) this.dead = true;
+        }
     }
 
     class Treat {
-        constructor(symbol) { this.symbol = symbol; this.x = Math.random() * canvas.width; this.y = -50; this.size = 30; this.speed = Math.random() * 2 + 2; this.rot = 0; }
-        draw() { ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rot); ctx.font = "30px serif"; ctx.fillText(this.symbol, 0, 0); ctx.restore(); this.y += this.speed; this.rot += 0.05; if(this.y > canvas.height + 50) this.dead = true; }
+        constructor(symbol) {
+            this.symbol = symbol;
+            this.x = Math.random() * canvas.width;
+            this.y = -50;
+            this.size = Math.random() * 20 + 25;
+            this.speedY = Math.random() * 2 + 2;
+            this.rotation = Math.random() * 360;
+            this.spin = Math.random() * 4 - 2;
+        }
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation * Math.PI / 180);
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "rgba(255, 183, 197, 0.5)";
+            ctx.font = `${this.size}px serif`;
+            ctx.fillText(this.symbol, -this.size/2, this.size/2);
+            ctx.restore();
+            this.y += this.speedY;
+            this.rotation += this.spin;
+            if (this.y > canvas.height + 50) this.dead = true;
+        }
     }
 
     for(let i=0; i<80; i++) particles.push(new Star());
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles = particles.filter(p => !p.dead && (p.life === undefined || p.life > 0));
+        particles = particles.filter(p => !p.dead);
         particles.forEach(p => p.draw());
         requestAnimationFrame(animate);
     }
     animate();
 
-    const handleMove = (e) => {
+    // Finger Touch Magic Effect
+    function handleMove(e) {
         const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
         const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
-        for(let i=0; i<2; i++) particles.push(new Sparkle(x, y));
-    };
+        for(let i=0; i<3; i++) {
+            particles.push(new Sparkle(x, y));
+        }
+    }
     window.addEventListener('mousemove', handleMove);
     window.addEventListener('touchmove', handleMove);
+
 </script>
-<style> @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } </style>
 </body>
 </html>
