@@ -1,97 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Gajra Wali</title>
 
 <style>
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #fdeff9, #ecb3ff);
-  font-family: 'Segoe UI', sans-serif;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  overflow: hidden;
+:root{
+  --bg1:#fdeff2;
+  --bg2:#f9e7ff;
+  --card:#ffffffcc;
+  --text:#3b2b3b;
+  --accent:#d46aa0;
 }
 
-.card {
-  background: rgba(255,255,255,0.5);
-  backdrop-filter: blur(12px);
-  max-width: 420px;
-  width: 100%;
-  border-radius: 28px;
-  padding: 26px;
-  color: #4a2440;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-  animation: rise 1.5s ease;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: linear-gradient(135deg,var(--bg1),var(--bg2));
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:var(--text);
+  overflow:hidden;
 }
 
-@keyframes rise {
-  from { opacity: 0; transform: translateY(25px); }
-  to { opacity: 1; transform: translateY(0); }
+.card{
+  width:92%;
+  max-width:420px;
+  background:var(--card);
+  backdrop-filter: blur(14px);
+  border-radius:24px;
+  padding:28px 22px 26px;
+  box-shadow:0 25px 60px rgba(0,0,0,.15);
+  animation:fadeUp .9s ease;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 14px;
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:none}
 }
 
-p {
-  line-height: 1.6;
-  font-size: 15.5px;
+h1{
+  margin:0 0 14px;
+  text-align:center;
+  font-weight:600;
+  letter-spacing:.3px;
 }
 
-.effects {
-  display: flex;
-  justify-content: space-around;
-  font-size: 26px;
-  margin: 18px 0;
+.message{
+  font-size:15.5px;
+  line-height:1.65;
+  text-align:center;
+  white-space:pre-line;
 }
 
-.effects span {
-  cursor: pointer;
-  transition: transform .2s;
-}
-.effects span:hover {
-  transform: scale(1.3);
-}
-
-.popup {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.85);
-  padding: 10px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  animation: fadeUp 2s ease forwards;
+.music-btn{
+  margin:20px auto 10px;
+  display:block;
+  border:none;
+  background:linear-gradient(135deg,#e78ac3,#b96cff);
+  color:white;
+  padding:12px 22px;
+  border-radius:999px;
+  font-size:15px;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(0,0,0,.2);
+  transition:transform .2s;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translate(-50%, 20px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+.music-btn:active{transform:scale(.95)}
+
+.tap-note{
+  text-align:center;
+  font-size:13px;
+  opacity:.7;
+  margin-top:8px;
 }
 
-.flower {
-  position: absolute;
-  bottom: -10px;
-  font-size: 18px;
-  animation: float 7s linear;
+.float-text{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:30%;
+  font-size:16px;
+  color:var(--accent);
+  animation:floatUp 2.4s ease forwards;
+  pointer-events:none;
+  white-space:nowrap;
 }
 
-@keyframes float {
-  to { transform: translateY(-120vh); opacity: 0; }
-}
-
-.music {
-  margin-top: 16px;
-  text-align: center;
-}
-.music iframe {
-  border-radius: 14px;
+@keyframes floatUp{
+  0%{opacity:0;transform:translate(-50%,10px)}
+  15%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-120px)}
 }
 </style>
 </head>
@@ -101,53 +106,65 @@ p {
 <div class="card">
   <h1>Thinking of You</h1>
 
-  <p>
-    I always miss you a lot.<br>
-    Each and every breath thinks about you.<br>
-    My mind and my heart feel you —<br>
-    sometimes I feel you right here in my chest too.<br><br>
+  <div class="message">
+I always miss you a lot.
+Each and every breath thinks about you.
+My mind and my heart feel you —
+sometimes I feel you right here in my chest too.
 
-    Your voice echoes in my ears and in my mind.<br>
-    You come into my dreams — day and night.<br><br>
+Your voice echoes in my ears and in my mind.
+You come into my dreams — day and night.
 
-    I miss each and every moment of you.<br>
-    I really feel you.<br>
-    I really do care for you.<br>
-    I’m not lying — you can trust me.
-  </p>
-
-  <div class="effects">
-    <span onclick="playEffect('🌸','Tum khush ho na?')">🌸</span>
-    <span onclick="playEffect('😊','Hanso na yrr, please')">😊</span>
-    <span onclick="playEffect('🍽️','Khana khaya?')">🍽️</span>
-    <span onclick="playEffect('😴','Soyi thi? Aaram kro')">😴</span>
+I miss each and every moment of you.
+I really feel you.
+I really do care about you.
+I’m not lying — you can trust me.
   </div>
 
-  <div class="music">
-    <!-- YouTube Shorts embed (tap to play sound) -->
-    <iframe width="100%" height="180"
-      src="https://www.youtube.com/embed/MYWWYJtMsEY"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen>
-    </iframe>
-  </div>
+  <button class="music-btn" onclick="toggleMusic()">▶ Play song</button>
+  <div class="tap-note">Tap anywhere on the screen 💗</div>
 </div>
 
-<script>
-function playEffect(icon, text) {
-  const f = document.createElement("div");
-  f.className = "flower";
-  f.innerHTML = icon;
-  f.style.left = Math.random() * 100 + "vw";
-  document.body.appendChild(f);
-  setTimeout(() => f.remove(), 7000);
+<audio id="song" preload="none">
+  <source src="https://www.saregama.com/song/lag-ja-gale-se-phir_1197" type="audio/mpeg">
+</audio>
 
-  const p = document.createElement("div");
-  p.className = "popup";
-  p.textContent = text;
-  document.body.appendChild(p);
-  setTimeout(() => p.remove(), 2000);
+<script>
+const song = document.getElementById("song");
+const btn = document.querySelector(".music-btn");
+
+function toggleMusic(){
+  if(song.paused){
+    song.play();
+    btn.textContent="⏸ Pause song";
+  }else{
+    song.pause();
+    btn.textContent="▶ Play song";
+  }
 }
+
+const lines = [
+  "tum khush ho na?",
+  "hanso na yrr please",
+  "khana khaya?",
+  "soyi thi?",
+  "aaram kro",
+  "main yahin hoon",
+  "care karta hoon",
+  "yaad aati ho"
+];
+
+document.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("music-btn")) return;
+
+  const t = document.createElement("div");
+  t.className="float-text";
+  t.textContent = lines[Math.floor(Math.random()*lines.length)];
+  t.style.left = (20 + Math.random()*60) + "%";
+  document.body.appendChild(t);
+
+  setTimeout(()=>t.remove(),2400);
+});
 </script>
 
 </body>
